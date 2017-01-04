@@ -15,13 +15,20 @@ class JuliaFull < Formula
   depends_on "pkg-config" => :build
 
   option "system-libm", "Use system's libm instead of openlibm"
+  #option "openblas-dynamic-arch", "Build OpenBLAS with dynamic arch support."
+  #option "openblas-no-avx2", "Build OpenBLAS without AVX2 support."
 
   def install
     build_opts = ["prefix=#{prefix}"]
     build_opts << "-j" << "1"
     build_opts << "MARCH=core2" if build.bottle?
     build_opts << "VERBOSE=1" if ARGV.verbose?
-    build_opts << "OPENBLAS_DYNAMIC_ARCH=1"
+    #build_opts << "OPENBLAS_DYNAMIC_ARCH=1" 
+    #build_opts << "OPENBLAS_NO_AVX2=1"
+    build_opts << "OPENBLAS_DYNAMIC_ARCH=0" 
+    build_opts << "OPENBLAS_USE_THREAD=0"
+    build_opts << "OPENBLAS_TARGET_ARCH=CORE2"
+    build_opts << "MARCH=core2"
     build_opts << "USE_SYSTEM_LIBM=1" if build.include? "system-libm"
 
     begin
