@@ -18,47 +18,54 @@ class Triqs < Formula
   depends_on :fortran
   depends_on :mpi => [:cc, :cxx]
 
-  depends_on "boost" => ["with-mpi"]
+  depends_on "boost" => "with-mpi"
   depends_on "boost-python"
   depends_on "openblas" => (OS.mac? ? :optional : :recommended)
   depends_on "fftw"
   depends_on "gmp"
-  depends_on "hdf5" => ["without-mpi"]
+  depends_on "hdf5" => "without-mpi"
   depends_on "doxygen" if build.with? "doc"
 
   depends_on :python
-  depends_on "h5py" => :python
+
+  depends_on "virtualenv" => :python
   depends_on "numpy" => :python
   depends_on "matplotlib" => :python
   depends_on "scipy" => :python
+
+  depends_on "h5py" => :python
   depends_on "mpi4py" => :python
 
+  #depends_on "ipython" => [:python, :recommended]
+
+  patch :DATA
+
   def install
-    python_packages = ["jinja2", "tornado", "zmq", "mako"]
+    python_packages = ["jupyter", "jinja2", "tornado", "zmq", "mako"]
     if build.with? "doc"
       python_packages << "sphinx" << "pyparsing" << "clang"
     end
 
-    venv = virtualenv_create(prefix/"venv", "python")
-    venv.pip_install python_packages
+    #venv = virtualenv_create(prefix/"venv", "python")
+    #venv.pip_install python_packages
 
-    #system "virtualenv", virtualenv_path, "--system-site-packages"
-    #system "#{virtualenv_path}/bin/pip", "install", *python_packages
+    #venv_path = "#{prefix}/venv"
+    venv_path = "#{libexec}"
+    system "virtualenv", venv_path, "--system-site-packages"
+    system "#{venv_path}/bin/pip", "install", *python_packages
    
     args = []
     args << "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}"
     args << "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}"
-    #args << "-DCLANG_COMPILER=/usr/bin/clang++"
     args << "-DHDF5_ROOT=#{HOMEBREW_PREFIX}"
     args << "-DFFTW_ROOT=#{HOMEBREW_PREFIX}"
-    #args << "-DLAPACK_LIBS=#{lapack_libs}"
     args << "-DBLA_VENDOR=#{(build.with? "openblas") ? "OpenBLAS" : "Apple"}"
-    args << "-DPYTHON_INTERPRETER=#{prefix}/venv/bin/python"
+    args << "-DPYTHON_INTERPRETER=#{venv_path}/bin/python"
 
     mkdir "build" do
       system "cmake", "..", *args, *std_cmake_args
       system "make"
-      #system "make", "test" if build.test?
+      system "make", "test" if build.with? "test"
       system "make", "install"
     end
   end
@@ -76,3 +83,21 @@ class Triqs < Formula
     system "false"
   end
 end
+__END__
+--- a/CMakeLists.txt	2016-06-20 21:01:56.000000000 -0400
++++ b/CMakeLists.txt	2017-01-05 21:02:39.000000000 -0500
+@@ -291,12 +291,12 @@
+ if(HDF5_IS_PARALLEL)
+  message(FATAL_ERROR "parallel(MPI) hdf5 is detected. The standard version is preferred.")
+ endif(HDF5_IS_PARALLEL)
+-message( STATUS " HDF5_LIBRARIES = ${HDF5_LIBRARIES} ")
++message( STATUS " HDF5_LIBRARIES = ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES}")
+ mark_as_advanced(HDF5_DIR) # defined somewhere else ? what is it ?
+ 
+ include_directories (SYSTEM ${HDF5_INCLUDE_DIR})
+ #link_libraries (${HDF5_LIBRARIES}) 
+-set(TRIQS_LIBRARY_HDF5  ${HDF5_LIBRARIES})
++set(TRIQS_LIBRARY_HDF5 ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES})
+ set(TRIQS_INCLUDE_HDF5 ${HDF5_INCLUDE_DIR})
+ set(TRIQS_CXX_DEFINITIONS ${TRIQS_CXX_DEFINITIONS} ${HDF5_DEFINITIONS})
+ set(TRIQS_HDF5_DIFF_EXECUTABLE ${HDF5_DIFF_EXECUTABLE})
