@@ -30,13 +30,15 @@ class Triqs < Formula
   depends_on "virtualenv" => :python
 
   depends_on "numpy" => :python
-  depends_on "matplotlib" => :python
   depends_on "scipy" => :python
+  depends_on "matplotlib" => :python
+  depends_on "cython" => [:python, :recommended]
 
   if build.without? "venv"
     depends_on "traitlets" => :python
     depends_on "ipython" => :python
     depends_on "jupyter" => :python
+    depends_on "six" => :python
     depends_on "h5py" => :python
     depends_on "mpi4py" => :python
     depends_on "jinja2" => :python
@@ -49,7 +51,7 @@ class Triqs < Formula
   patch :DATA
 
   def install
-    python_packages = %w[traitlets ipython jupyter h5py mpi4py jinja2 tornado zmq mako mpi4py]
+    python_packages = %w[traitlets ipython jupyter six h5py mpi4py jinja2 tornado zmq mako mpi4py]
     if build.with? "doc"
       python_packages << "sphinx" << "pyparsing" << "clang"
     end
