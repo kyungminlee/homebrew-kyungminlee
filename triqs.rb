@@ -46,12 +46,11 @@ class Triqs < Formula
       python_packages << "sphinx" << "pyparsing" << "clang"
     end
 
-    #venv = virtualenv_create(prefix/"venv", "python")
-    #venv.pip_install python_packages
+    venv_path = "#{libexec}/venv"
+    venv = virtualenv_create(venv_path, "python")
+    venv.pip_install python_packages
 
-    #venv_path = "#{prefix}/venv"
-    venv_path = "#{libexec}"
-    system "virtualenv", venv_path, "--system-site-packages"
+    system "virtualenv", venv_path
     system "#{venv_path}/bin/pip", "install", *python_packages
    
     args = []
