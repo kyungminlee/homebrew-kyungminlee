@@ -1,16 +1,16 @@
 class Triqs < Formula
   include Language::Python::Virtualenv
 
-  desc "A Toolbox for Research on Interacting Quantum Systems"
+  desc "Toolbox for Research on Interacting Quantum Systems"
   homepage "https://triqs.ipht.cnrs.fr"
   url "https://github.com/TRIQS/triqs/archive/1.3.2.tar.gz"
-  version "1.3.2"
   sha256 "5a59f2fd6256cd09ece12718bd56ed8218ea091c3001ff14f08693206bca74b3"
 
   needs :cxx11
 
   option "with-doc", "Build documentation"
   option "with-test", "Build tests"
+  option "with-venv", "Build the python modules into the virtualenv"
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
@@ -27,19 +27,29 @@ class Triqs < Formula
   depends_on "doxygen" if build.with? "doc"
 
   depends_on :python
-
   depends_on "virtualenv" => :python
+
   depends_on "numpy" => :python
   depends_on "matplotlib" => :python
   depends_on "scipy" => :python
 
-  depends_on "h5py" => :python
-  depends_on "mpi4py" => :python
+  if build.without? "venv"
+    depends_on "traitlets" => :python
+    depends_on "ipython" => :python
+    depends_on "jupyter" => :python
+    depends_on "h5py" => :python
+    depends_on "mpi4py" => :python
+    depends_on "jinja2" => :python
+    depends_on "tornado" => :python
+    depends_on "zmq" => :python
+    depends_on "mako" => :python
+    depends_on "mpi4py" => :python
+  end
 
   patch :DATA
 
   def install
-    python_packages = ["ipython", "jupyter", "jinja2", "tornado", "zmq", "mako"]
+    python_packages = %w[traitlets ipython jupyter h5py mpi4py jinja2 tornado zmq mako mpi4py]
     if build.with? "doc"
       python_packages << "sphinx" << "pyparsing" << "clang"
     end
@@ -48,16 +58,14 @@ class Triqs < Formula
     venv = virtualenv_create(venv_path, "python")
     venv.pip_install python_packages
 
-    system "virtualenv", venv_path
-    system "#{venv_path}/bin/pip", "install", *python_packages
-   
-    args = []
-    args << "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}"
-    args << "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}"
-    args << "-DHDF5_ROOT=#{HOMEBREW_PREFIX}"
-    args << "-DFFTW_ROOT=#{HOMEBREW_PREFIX}"
-    args << "-DBLA_VENDOR=#{(build.with? "openblas") ? "OpenBLAS" : "Apple"}"
-    args << "-DPYTHON_INTERPRETER=#{venv_path}/bin/python"
+    args = [
+      "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
+      "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
+      "-DHDF5_ROOT=#{HOMEBREW_PREFIX}",
+      "-DFFTW_ROOT=#{HOMEBREW_PREFIX}",
+      "-DBLA_VENDOR=#{(build.with? "openblas") ? "OpenBLAS" : "Apple"}",
+      "-DPYTHON_INTERPRETER=#{venv_path}/bin/python",
+    ]
 
     mkdir "build" do
       system "cmake", "..", *args, *std_cmake_args
