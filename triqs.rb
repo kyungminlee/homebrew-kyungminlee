@@ -36,12 +36,10 @@ class Triqs < Formula
   depends_on "h5py" => :python
   depends_on "mpi4py" => :python
 
-  #depends_on "ipython" => [:python, :recommended]
-
   patch :DATA
 
   def install
-    python_packages = ["jupyter", "jinja2", "tornado", "zmq", "mako"]
+    python_packages = ["ipython", "jupyter", "jinja2", "tornado", "zmq", "mako"]
     if build.with? "doc"
       python_packages << "sphinx" << "pyparsing" << "clang"
     end
