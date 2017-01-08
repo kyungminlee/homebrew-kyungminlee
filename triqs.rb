@@ -347,7 +347,6 @@ class Triqs < Formula
 
       venv.pip_install resources
     end
-
     args = [
       "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
       "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
