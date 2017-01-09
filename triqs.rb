@@ -3,9 +3,16 @@ class Triqs < Formula
 
   desc "Toolbox for Research on Interacting Quantum Systems"
   homepage "https://triqs.ipht.cnrs.fr"
-  url "https://github.com/TRIQS/triqs/archive/1.3.2.tar.gz"
-  sha256 "5a59f2fd6256cd09ece12718bd56ed8218ea091c3001ff14f08693206bca74b3"
   head "https://github.com/TRIQS/triqs.git"
+
+  stable do
+    url "https://github.com/TRIQS/triqs/archive/1.3.2.tar.gz"
+    sha256 "5a59f2fd6256cd09ece12718bd56ed8218ea091c3001ff14f08693206bca74b3"
+    # CMakeLists.txt
+    # https://github.com/TRIQS/triqs/commit/acab58a59375028f5fee907dbc3d80de1ef496ae
+    # Safe to remove when the next stable release is out
+    patch :DATA
+  end
 
   needs :cxx11
 
@@ -54,6 +61,7 @@ class Triqs < Formula
     depends_on "homebrew/python/numpy"
     depends_on "homebrew/python/scipy"
     depends_on "homebrew/python/matplotlib"
+    depends_on "homebrew/python/h5py"
 
     depends_on "zeromq" => (OS.mac? ? :optional : :recommended)
 
@@ -100,11 +108,6 @@ class Triqs < Formula
     resource "functools32" do
       url "https://files.pythonhosted.org/packages/c5/60/6ac26ad05857c601308d8fb9e87fa36d0ebf889423f47c3502ef034365db/functools32-3.2.3-2.tar.gz"
       sha256 "f6253dfbe0538ad2e387bd8fdfd9293c925d63553f5813c4e587745416501e6d"
-    end
-
-    resource "h5py" do
-      url "https://files.pythonhosted.org/packages/22/82/64dada5382a60471f85f16eb7d01cc1a9620aea855cd665609adf6fdbb0d/h5py-2.6.0.tar.gz"
-      sha256 "b2afc35430d5e4c3435c996e4f4ea2aba1ea5610e2d2f46c9cae9f785e33c435"
     end
 
     resource "html5lib" do
@@ -338,13 +341,6 @@ class Triqs < Formula
         sha256 "8e6a77a20b2df950de322fc32f3b508697d9d654fe984e3cc88f446a5b4c17c5"
       end
     end
-  end
-
-  stable do
-    # CMakeLists.txt
-    # https://github.com/TRIQS/triqs/commit/acab58a59375028f5fee907dbc3d80de1ef496ae
-    # Safe to remove when the next stable release is out
-    patch :DATA
   end
 
   def install
