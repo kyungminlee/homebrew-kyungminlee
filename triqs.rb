@@ -51,6 +51,8 @@ class Triqs < Formula
       depends_on "sphinx" => :python
     end
   else
+    depends_on "zmq" => (OS.mac? ? :optional : :recommended)
+    
     resource "backports_abc" do
       url "https://files.pythonhosted.org/packages/68/3c/1317a9113c377d1e33711ca8de1e80afbaf4a3c950dd0edfaf61f9bfe6d8/backports_abc-0.5.tar.gz"
       sha256 "033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"
