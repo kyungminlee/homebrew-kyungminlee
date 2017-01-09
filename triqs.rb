@@ -10,7 +10,7 @@ class Triqs < Formula
 
   option "with-doc", "Build documentation"
   option "with-test", "Build tests"
-  option "without-venv", "Do not use Virtualenv"
+  option "without-venv", "Do not create virtualenv"
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
@@ -29,11 +29,11 @@ class Triqs < Formula
   depends_on :python
   depends_on "virtualenv" => :python
 
-  depends_on "homebrew/python/numpy"
-  depends_on "homebrew/python/scipy"
-  depends_on "homebrew/python/matplotlib"
-
   if build.without? "venv"
+    depends_on "numpy" => :python
+    depends_on "scipy" => :python
+    depends_on "matplotlib" => :python
+
     depends_on "traitlets" => :python
     depends_on "ipython" => :python
     depends_on "jupyter" => :python
@@ -51,6 +51,10 @@ class Triqs < Formula
       depends_on "sphinx" => :python
     end
   else
+    depends_on "homebrew/python/numpy"
+    depends_on "homebrew/python/scipy"
+    depends_on "homebrew/python/matplotlib"
+
     depends_on "zmq" => (OS.mac? ? :optional : :recommended)
     
     resource "backports_abc" do
