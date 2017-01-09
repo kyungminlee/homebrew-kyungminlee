@@ -5,11 +5,12 @@ class Triqs < Formula
   homepage "https://triqs.ipht.cnrs.fr"
   url "https://github.com/TRIQS/triqs/archive/1.3.2.tar.gz"
   sha256 "5a59f2fd6256cd09ece12718bd56ed8218ea091c3001ff14f08693206bca74b3"
+  head "https://github.com/TRIQS/triqs.git"
 
   needs :cxx11
 
   option "with-doc", "Build documentation"
-  option "with-test", "Build tests"
+  option "with-test", "Verify the build with `make test`"
   option "without-venv", "Do not create virtualenv"
 
   depends_on "pkg-config" => :build
@@ -55,8 +56,8 @@ class Triqs < Formula
     depends_on "homebrew/python/scipy"
     depends_on "homebrew/python/matplotlib"
 
-    depends_on "zmq" => (OS.mac? ? :optional : :recommended)
-    
+    depends_on "zeromq" => (OS.mac? ? :optional : :recommended)
+
     resource "backports_abc" do
       url "https://files.pythonhosted.org/packages/68/3c/1317a9113c377d1e33711ca8de1e80afbaf4a3c950dd0edfaf61f9bfe6d8/backports_abc-0.5.tar.gz"
       sha256 "033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"
@@ -340,7 +341,12 @@ class Triqs < Formula
     end
   end
 
-  patch :DATA
+  stable do
+    # CMakeLists.txt
+    # https://github.com/TRIQS/triqs/commit/acab58a59375028f5fee907dbc3d80de1ef496ae
+    # Safe to remove when the next stable release is out
+    patch :DATA
+  end
 
   def install
     if build.with? "venv"
