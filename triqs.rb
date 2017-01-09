@@ -11,7 +11,7 @@ class Triqs < Formula
 
   option "with-doc", "Build documentation"
   option "with-test", "Verify the build with `make test`"
-  option "without-venv", "Do not create virtualenv"
+  option "without-venv", "Build without virtualenv"
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
@@ -28,28 +28,27 @@ class Triqs < Formula
   depends_on "doxygen" if build.with? "doc"
 
   depends_on :python
-  depends_on "virtualenv" => :python
 
   if build.without? "venv"
-    depends_on "numpy" => :python
-    depends_on "scipy" => :python
-    depends_on "matplotlib" => :python
+    depends_on "numpy"       => :python
+    depends_on "scipy"       => :python
+    depends_on "matplotlib"  => :python
 
-    depends_on "traitlets" => :python
-    depends_on "ipython" => :python
-    depends_on "jupyter" => :python
-    depends_on "six" => :python
-    depends_on "h5py" => :python
-    depends_on "mpi4py" => :python
-    depends_on "jinja2" => :python
-    depends_on "tornado" => :python
-    depends_on "zmq" => :python
-    depends_on "mako" => :python
-    depends_on "mpi4py" => :python
+    depends_on "traitlets"   => :python
+    depends_on "ipython"     => :python
+    depends_on "jupyter"     => :python
+    depends_on "six"         => :python
+    depends_on "h5py"        => :python
+    depends_on "mpi4py"      => :python
+    depends_on "jinja2"      => :python
+    depends_on "tornado"     => :python
+    depends_on "zmq"         => :python
+    depends_on "mako"        => :python
+    depends_on "mpi4py"      => :python
     if build.with? "doc"
-      depends_on "clang" => :python
+      depends_on "clang"     => :python
       depends_on "pyparsing" => :python
-      depends_on "sphinx" => :python
+      depends_on "sphinx"    => :python
     end
   else
     depends_on "homebrew/python/numpy"
