@@ -32,14 +32,12 @@ before_install:
   - export HOMEBREW_DEVELOPER="1"
   - env | grep TRAVIS | tee /tmp/travis.env
   - export HOMEBREW_DEVELOPER="1"
+  - export HOMEBREW_NO_AUTO_UPDATE="1"
   - ulimit -n 1024
   # Fix incorrect file permissions (664)
   - chmod 0644 *.rb
   - umask 022
-  #- brew tap linuxbrew/xorg
-
-#install:
-#  - pip install pysam
+  - brew tap linuxbrew/xorg
 
 script:
   - brew test-bot
@@ -47,4 +45,4 @@ script:
 notifications:
   email:
     on_success: never
-    on_failure: always
+    on_failure: never
