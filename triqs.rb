@@ -23,7 +23,6 @@ class Triqs < Formula
 
   option "with-doc", "Build documentation"
   option "with-test", "Verify the build with `make test`"
-  option "without-python", "Build without python2 support"
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
@@ -144,41 +143,42 @@ class Triqs < Formula
   end
 
   def install
-    Language::Python.each_python(build) do |python, version|
-      bundle_path = libexec/"lib/python#{version}/site-packages"
-      ENV.prepend_create_path "PYTHONPATH", bundle_path
-      resources.each do |r|
-        r.stage do
-          system python, *Language::Python.setup_install_args(libexec)
-        end
+    python = "python"
+    version = Language::Python.major_minor_version python
+
+    bundle_path = libexec/"lib/python#{version}/site-packages"
+    ENV.prepend_create_path "PYTHONPATH", bundle_path
+    resources.each do |r|
+      r.stage do
+        system python, *Language::Python.setup_install_args(libexec)
       end
+    end
 
-      dest_path = lib/"python#{version}/site-packages"
-      dest_path.mkpath
-      (dest_path/"homebrew-triqs-bundle.pth").write "#{bundle_path}\n"
+    dest_path = lib/"python#{version}/site-packages"
+    dest_path.mkpath
+    (dest_path/"homebrew-triqs-bundle.pth").write "#{bundle_path}\n"
 
-      ENV.prepend_create_path "PYTHONPATH", bundle_path
-      args = [
-        "-DCMAKE_INSTALL_PREFIX=#{prefix}",
-        "-DHDF5_ROOT=#{Formula["hdf5"].opt_prefix}",
-        "-DFFTW_ROOT=#{Formula["fftw"].opt_prefix}",
-        "-DPYTHON_INTERPRETER=#{python}",
-        "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
-        "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
-      ]
+    ENV.prepend_create_path "PYTHONPATH", bundle_path
+    args = [
+      "-DCMAKE_INSTALL_PREFIX=#{prefix}",
+      "-DHDF5_ROOT=#{Formula["hdf5"].opt_prefix}",
+      "-DFFTW_ROOT=#{Formula["fftw"].opt_prefix}",
+      "-DPYTHON_INTERPRETER=#{python}",
+      "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
+      "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
+    ]
 
-      if build.with? "openblas"
-        args << "-DBLA_VENDOR=OpenBLAS"
-      elsif OS.mac?
-        args << "-DBLA_VENDOR=Apple"
-      end
+    if build.with? "openblas"
+      args << "-DBLA_VENDOR=OpenBLAS"
+    elsif OS.mac?
+      args << "-DBLA_VENDOR=Apple"
+    end
 
-      mktemp do
-        system "cmake", buildpath, *args, *std_cmake_args
-        make
-        make "test" if build.with? "test"
-        make "install"
-      end
+    mktemp do
+      system "cmake", buildpath, *args, *std_cmake_args
+      make
+      make "test" if build.with? "test"
+      make "install"
     end
   end
 
@@ -189,8 +189,6 @@ class Triqs < Formula
   end
 
   test do
-    Language::Python.each_python(build) do |python, _version|
-      system python, "-c", "import pytriqs.gf.local"
-    end
+    system "python", "-c", "import pytriqs.gf.local"
   end
 end
