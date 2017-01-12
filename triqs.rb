@@ -154,12 +154,12 @@ class Triqs < Formula
 
       ENV.prepend_create_path "PYTHONPATH", bundle_path
       args = [
-        "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
-        "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
+        "-DCMAKE_INSTALL_PREFIX=#{prefix}",
         "-DHDF5_ROOT=#{Formula["hdf5"].opt_prefix}",
         "-DFFTW_ROOT=#{Formula["fftw"].opt_prefix}",
         "-DPYTHON_INTERPRETER=#{python}",
-        "-DCMAKE_INSTALL_PREFIX=#{prefix}",
+        "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
+        "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
       ]
 
       if build.with? "openblas"
