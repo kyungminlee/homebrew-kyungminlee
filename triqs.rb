@@ -13,11 +13,12 @@ class Triqs < Formula
     end
   end
 
+  bottle :unneeded # temporary
   needs :cxx11
 
   option "with-doc", "Build documentation"
   option "with-test", "Verify the build with `make test`"
-  option "without-python", "Build without Python 2.7 support"
+  option "without-python", "Build without python2 support"
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
