@@ -31,8 +31,8 @@ class Triqs < Formula
   depends_on "boost-python"
   depends_on "fftw"
   depends_on "gmp"
+  depends_on "zeromq"
   depends_on "doxygen" if build.with? "doc"
-  depends_on "zeromq" => (OS.mac? ? :optional : :recommended)
 
   depends_on "homebrew/science/hdf5" => "without-mpi"
   depends_on "homebrew/science/openblas" => (OS.mac? ? :optional : :recommended)
