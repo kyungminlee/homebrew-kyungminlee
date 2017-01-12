@@ -1,6 +1,4 @@
 class Triqs < Formula
-  include Language::Python::Virtualenv
-
   desc "Toolbox for Research on Interacting Quantum Systems"
   homepage "https://triqs.ipht.cnrs.fr"
   head "https://github.com/TRIQS/triqs.git"
@@ -9,9 +7,10 @@ class Triqs < Formula
     url "https://github.com/TRIQS/triqs/archive/1.3.2.tar.gz"
     sha256 "5a59f2fd6256cd09ece12718bd56ed8218ea091c3001ff14f08693206bca74b3"
 
-    # https://github.com/TRIQS/triqs/commit/acab58a59375028f5fee907dbc3d80de1ef496ae
-    # Safe to remove when the next stable release is out
-    patch :DATA
+    patch do
+      url "https://github.com/TRIQS/triqs/commit/acab58a59375028f5fee907dbc3d80de1ef496ae.patch"
+      sha256 "88b1bbb9abdfa930c722773a22c573136dae0e94555708cec21d0668c7fd0f45"
+    end
   end
 
   needs :cxx11
@@ -19,13 +18,13 @@ class Triqs < Formula
   option "with-doc", "Build documentation"
   option "with-test", "Verify the build with `make test`"
   option "without-python", "Build without Python 2.7 support"
-  depends_on :python3 => :optional
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
 
   depends_on :fortran
   depends_on :python
+  depends_on :python3 => :optional
   depends_on :mpi => [:cc, :cxx]
 
   depends_on "boost" => "with-mpi"
@@ -47,49 +46,41 @@ class Triqs < Formula
   depends_on "homebrew/python/matplotlib"
   depends_on "homebrew/python/mpi4py"
 
-  # GRP: tornado
   resource "backports_abc" do
     url "https://files.pythonhosted.org/packages/68/3c/1317a9113c377d1e33711ca8de1e80afbaf4a3c950dd0edfaf61f9bfe6d8/backports_abc-0.5.tar.gz"
     sha256 "033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"
   end
 
-  # GRP: tornado
   resource "certifi" do
     url "https://files.pythonhosted.org/packages/4f/75/e1bc6e363a2c76f8d7e754c27c437dbe4086414e1d6d2f6b2a3e7846f22b/certifi-2016.9.26.tar.gz"
     sha256 "8275aef1bbeaf05c53715bfc5d8569bd1e04ca1e8e69608cc52bcaac2604eb19"
   end
 
-  # GRP: Mako
   resource "Mako" do
     url "https://files.pythonhosted.org/packages/56/4b/cb75836863a6382199aefb3d3809937e21fa4cb0db15a4f4ba0ecc2e7e8e/Mako-1.0.6.tar.gz"
     sha256 "48559ebd872a8e77f92005884b3d88ffae552812cdf17db6768e5c3be5ebbe0d"
   end
 
-  # GRP: Mako
   resource "MarkupSafe" do
     url "https://files.pythonhosted.org/packages/c0/41/bae1254e0396c0cc8cf1751cb7d9afc90a602353695af5952530482c963f/MarkupSafe-0.23.tar.gz"
     sha256 "a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3"
   end
 
-  # GRP: pyzmq
   resource "pyzmq" do
     url "https://files.pythonhosted.org/packages/af/37/8e0bf3800823bc247c36715a52e924e8f8fd5d1432f04b44b8cd7a5d7e55/pyzmq-16.0.2.tar.gz"
     sha256 "0322543fff5ab6f87d11a8a099c4c07dd8a1719040084b6ce9162bcdf5c45c9d"
   end
 
-  # GRP: tornado
   resource "singledispatch" do
     url "https://files.pythonhosted.org/packages/d9/e9/513ad8dc17210db12cb14f2d4d190d618fb87dd38814203ea71c87ba5b68/singledispatch-3.4.0.3.tar.gz"
     sha256 "5b06af87df13818d14f08a028e42f566640aef80805c3b50c5056b086e3c2b9c"
   end
 
-  # GRP: tornado
   resource "six" do
     url "https://files.pythonhosted.org/packages/b3/b2/238e2590826bfdd113244a40d9d3eb26918bd798fc187e2360a8367068db/six-1.10.0.tar.gz"
     sha256 "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a"
   end
 
-  # GRP: tornado
   resource "tornado" do
     url "https://files.pythonhosted.org/packages/1e/7c/ea047f7bbd1ff22a7f69fe55e7561040e3e54d6f31da6267ef9748321f98/tornado-4.4.2.tar.gz"
     sha256 "2898f992f898cd41eeb8d53b6df75495f2f423b6672890aadaf196ea1448edcc"
@@ -184,33 +175,17 @@ class Triqs < Formula
         make "install"
       end
     end
+  end
 
-    # This formula installs TRIQS as C++ library and Python module.
-    # Do not install bin files.
+  def post_install
+    # This formula installs TRIQS as C++ and Python module.
+    # Do not install files in bin.
     bin.rmtree
   end
 
   test do
-    Language::Python.each_python(build) do |python, version|
+    Language::Python.each_python(build) do |python, _version|
       system python, "-c", "import pytriqs.gf.local"
     end
   end
 end
-__END__
---- a/CMakeLists.txt	2016-06-20 21:01:56.000000000 -0400
-+++ b/CMakeLists.txt	2017-01-05 21:02:39.000000000 -0500
-@@ -291,12 +291,12 @@
- if(HDF5_IS_PARALLEL)
-  message(FATAL_ERROR "parallel(MPI) hdf5 is detected. The standard version is preferred.")
- endif(HDF5_IS_PARALLEL)
--message( STATUS " HDF5_LIBRARIES = ${HDF5_LIBRARIES} ")
-+message( STATUS " HDF5_LIBRARIES = ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES}")
- mark_as_advanced(HDF5_DIR) # defined somewhere else ? what is it ?
- 
- include_directories (SYSTEM ${HDF5_INCLUDE_DIR})
- #link_libraries (${HDF5_LIBRARIES}) 
--set(TRIQS_LIBRARY_HDF5  ${HDF5_LIBRARIES})
-+set(TRIQS_LIBRARY_HDF5 ${HDF5_LIBRARIES} ${HDF5_HL_LIBRARIES})
- set(TRIQS_INCLUDE_HDF5 ${HDF5_INCLUDE_DIR})
- set(TRIQS_CXX_DEFINITIONS ${TRIQS_CXX_DEFINITIONS} ${HDF5_DEFINITIONS})
- set(TRIQS_HDF5_DIFF_EXECUTABLE ${HDF5_DIFF_EXECUTABLE})
