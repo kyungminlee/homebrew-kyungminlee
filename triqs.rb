@@ -23,6 +23,7 @@ class Triqs < Formula
 
   option "with-doc", "Build documentation"
   option "with-test", "Verify the build with `make test`"
+  option "without-python", "Build without python2 support"
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
