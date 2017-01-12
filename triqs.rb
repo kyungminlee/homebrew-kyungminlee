@@ -11,6 +11,11 @@ class Triqs < Formula
       url "https://github.com/TRIQS/triqs/commit/acab58a59375028f5fee907dbc3d80de1ef496ae.patch"
       sha256 "88b1bbb9abdfa930c722773a22c573136dae0e94555708cec21d0668c7fd0f45"
     end
+
+    patch do
+      url "https://github.com/TRIQS/triqs/commit/44db9d0e131c36eb8f7fc8bc9323fbd1a2117571.patch"
+      sha256 "457ea8c39e50b65bc90edb0ab46732b720a999e64506056164b9fdb77295481e"
+    end
   end
 
   bottle :unneeded # temporary
@@ -18,14 +23,12 @@ class Triqs < Formula
 
   option "with-doc", "Build documentation"
   option "with-test", "Verify the build with `make test`"
-  option "without-python", "Build without python2 support"
 
   depends_on "pkg-config" => :build
   depends_on "cmake" => :build
 
   depends_on :fortran
   depends_on :python
-  depends_on :python3 => :optional
   depends_on :mpi => [:cc, :cxx]
 
   depends_on "boost" => "with-mpi"
@@ -181,7 +184,7 @@ class Triqs < Formula
   def post_install
     # This formula installs TRIQS as C++ and Python module.
     # Do not install files in bin.
-    bin.rmtree
+    bin.rename("#{pkgshare}/bin")
   end
 
   test do
