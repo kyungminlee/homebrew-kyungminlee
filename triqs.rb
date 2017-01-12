@@ -32,8 +32,8 @@ class Triqs < Formula
   depends_on "boost-python"
   depends_on "fftw"
   depends_on "gmp"
+  depends_on "zeromq"
   depends_on "doxygen" if build.with? "doc"
-  depends_on "zeromq" => (OS.mac? ? :optional : :recommended)
 
   depends_on "homebrew/science/hdf5" => "without-mpi"
   depends_on "homebrew/science/openblas" => (OS.mac? ? :optional : :recommended)
@@ -155,12 +155,12 @@ class Triqs < Formula
 
       ENV.prepend_create_path "PYTHONPATH", bundle_path
       args = [
-        "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
-        "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
+        "-DCMAKE_INSTALL_PREFIX=#{prefix}",
         "-DHDF5_ROOT=#{Formula["hdf5"].opt_prefix}",
         "-DFFTW_ROOT=#{Formula["fftw"].opt_prefix}",
         "-DPYTHON_INTERPRETER=#{python}",
-        "-DCMAKE_INSTALL_PREFIX=#{prefix}",
+        "-DBuild_Documentation=#{(build.with? "doc") ? "ON" : "OFF"}",
+        "-DBuild_Tests=#{(build.with? "test") ? "ON" : "OFF"}",
       ]
 
       if build.with? "openblas"
