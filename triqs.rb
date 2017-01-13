@@ -189,6 +189,63 @@ class Triqs < Formula
   end
 
   test do
-    system "python", "-c", "import pytriqs.gf.local"
+    python = "python"
+    version = Language::Python.major_minor_version python
+
+    # Test Python module
+    (testpath/"green.py").write <<-EOS.undent
+      from pytriqs.gf.local import GfImFreq, iOmega_n, inverse
+      g = GfImFreq(indices = [1], beta = 50, n_points = 1000)
+      g << inverse( iOmega_n + 0.5 )
+      print(g(1.0))
+    EOS
+    system python, "#{testpath}/green.py"
+
+    # Test C++ library
+    python_prefix = `#{python} -c 'from distutils import sysconfig; import sys; sys.stdout.write(sysconfig.EXEC_PREFIX)'`
+    python_lib = "#{python_prefix}/lib"
+    python_inc = `#{python} -c 'from distutils import sysconfig; import sys; sys.stdout.write(sysconfig.get_python_inc())'`
+    numpy_inc = `#{python} -c 'import sys, numpy; sys.stdout.write(numpy.get_include())'`
+    (testpath/"green.cpp").write <<-EOS.undent
+      #include <iostream>
+      #include <triqs/gfs.hpp>
+      using namespace triqs::gfs;
+      using triqs::clef::placeholder;
+      int main(int argc, char** argv)
+      {
+        double beta=50;
+        int nw=1000;
+        auto g = gf<imfreq>{{beta, Fermion, nw},{1,1}};
+        placeholder<0> w_;
+        g(w_) << 1/(w_+0.5);
+        std::cout << g(1.0) << std::endl;
+        return 0;
+      }
+    EOS
+
+    lapack_flags =
+      if build.with? "openblas"
+        ["-isystem#{Formula["openblas"].include}", "-Lsystem#{Formula["openblas"].lib}"]
+      elsif OS.mac?
+        ["-framework", "Accelerate"]
+      else
+        ["-llapack", "-lblas"]
+      end
+
+    args = [
+      "-o",
+      testpath/"green",
+      "-std=c++1y",
+      "-I#{include}",
+      "-L#{lib}",
+      "-isystem#{python_inc}",
+      "-isystem#{numpy_inc}",
+      "-L#{python_lib}",
+      *lapack_flags,
+      "-ltriqs",
+      "-lpython#{version}",
+    ]
+    system "mpic++", "#{testpath}/green.cpp", *args
+    system "#{testpath}/green"
   end
 end
