@@ -40,15 +40,14 @@ class Triqs < Formula
 
   depends_on "homebrew/science/hdf5" => "without-mpi"
   depends_on "homebrew/science/openblas" => (OS.mac? ? :optional : :recommended)
+  depends_on "homebrew/science/matplotlib"
 
   numpy_options = []
   numpy_options << "with-openblas" if build.with? "openblas"
-  depends_on "homebrew/python/numpy" => numpy_options
-  depends_on "homebrew/python/scipy" => numpy_options
+  depends_on "numpy" => numpy_options
+  depends_on "scipy" => numpy_options
 
-  depends_on "homebrew/python/h5py" => "without-mpi"
-  depends_on "homebrew/python/matplotlib"
-  depends_on "homebrew/python/mpi4py"
+  depends_on "jupyter" => :python
 
   resource "backports_abc" do
     url "https://files.pythonhosted.org/packages/68/3c/1317a9113c377d1e33711ca8de1e80afbaf4a3c950dd0edfaf61f9bfe6d8/backports_abc-0.5.tar.gz"
@@ -56,8 +55,18 @@ class Triqs < Formula
   end
 
   resource "certifi" do
-    url "https://files.pythonhosted.org/packages/4f/75/e1bc6e363a2c76f8d7e754c27c437dbe4086414e1d6d2f6b2a3e7846f22b/certifi-2016.9.26.tar.gz"
-    sha256 "8275aef1bbeaf05c53715bfc5d8569bd1e04ca1e8e69608cc52bcaac2604eb19"
+    url "https://files.pythonhosted.org/packages/b6/fa/ca682d5ace0700008d246664e50db8d095d23750bb212c0086305450c276/certifi-2017.1.23.tar.gz"
+    sha256 "81877fb7ac126e9215dfb15bfef7115fdc30e798e0013065158eed0707fd99ce"
+  end
+
+  resource "h5py" do
+    url "https://files.pythonhosted.org/packages/22/82/64dada5382a60471f85f16eb7d01cc1a9620aea855cd665609adf6fdbb0d/h5py-2.6.0.tar.gz"
+    sha256 "b2afc35430d5e4c3435c996e4f4ea2aba1ea5610e2d2f46c9cae9f785e33c435"
+  end
+
+  resource "Jinja2" do
+    url "https://files.pythonhosted.org/packages/71/59/d7423bd5e7ddaf3a1ce299ab4490e9044e8dfd195420fc83a24de9e60726/Jinja2-2.9.5.tar.gz"
+    sha256 "702a24d992f856fa8d5a7a36db6128198d0c21e1da34448ca236c42e92384825"
   end
 
   resource "Mako" do
@@ -68,6 +77,11 @@ class Triqs < Formula
   resource "MarkupSafe" do
     url "https://files.pythonhosted.org/packages/c0/41/bae1254e0396c0cc8cf1751cb7d9afc90a602353695af5952530482c963f/MarkupSafe-0.23.tar.gz"
     sha256 "a4ec1aff59b95a14b45eb2e23761a0179e98319da5a7eb76b56ea8cdc7b871c3"
+  end
+
+  resource "mpi4py" do
+    url "https://files.pythonhosted.org/packages/ee/b8/f443e1de0b6495479fc73c5863b7b5272a4ece5122e3589db6cd3bb57eeb/mpi4py-2.0.0.tar.gz"
+    sha256 "6543a05851a7aa1e6d165e673d422ba24e45c41e4221f0993fe1e5924a00cb81"
   end
 
   resource "pyzmq" do
