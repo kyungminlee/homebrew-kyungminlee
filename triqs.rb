@@ -4,18 +4,8 @@ class Triqs < Formula
   head "https://github.com/TRIQS/triqs.git"
 
   stable do
-    url "https://github.com/TRIQS/triqs/archive/1.3.2.tar.gz"
-    sha256 "5a59f2fd6256cd09ece12718bd56ed8218ea091c3001ff14f08693206bca74b3"
-
-    patch do
-      url "https://github.com/TRIQS/triqs/commit/acab58a59375028f5fee907dbc3d80de1ef496ae.patch"
-      sha256 "88b1bbb9abdfa930c722773a22c573136dae0e94555708cec21d0668c7fd0f45"
-    end
-
-    patch do
-      url "https://github.com/TRIQS/triqs/commit/44db9d0e131c36eb8f7fc8bc9323fbd1a2117571.patch"
-      sha256 "457ea8c39e50b65bc90edb0ab46732b720a999e64506056164b9fdb77295481e"
-    end
+    url "https://github.com/TRIQS/triqs/archive/1.4.tar.gz"
+    sha256 "98378d5fb934c02f710d96eb5a3ffa28cbee20bab73b574487f5db18c5457cc4"
   end
 
   bottle :unneeded # temporary
