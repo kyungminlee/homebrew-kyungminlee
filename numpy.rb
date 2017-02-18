@@ -40,12 +40,13 @@ class Numpy < Formula
       ENV.append "FFLAGS", "-fPIC"
     end
 
+=begin
     if build.with? "openblas"
       openblas_dir = Formula["openblas"].opt_prefix
       # Setting ATLAS to None is important to prevent numpy from always
       # linking against Accelerate.framework.
       ENV["ATLAS"] = "None"
-      ENV["BLAS"] = ENV["LAPACK"] = "#{openblas_dir}/lib/libopenblas.dylib"
+      ENV["BLAS"] = ENV["LAPACK"] = "#{openblas_dir}/lib/libopenblas.so"
 
       config = <<-EOS.undent
         [openblas]
@@ -55,6 +56,7 @@ class Numpy < Formula
       EOS
       (buildpath/"site.cfg").write config
     end
+=end
 
     Language::Python.each_python(build) do |python, version|
       dest_path = lib/"python#{version}/site-packages"
