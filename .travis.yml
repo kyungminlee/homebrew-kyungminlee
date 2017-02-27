@@ -53,7 +53,7 @@ before_install:
   - brew tap linuxbrew/xorg
 
 script:
-  - brew test-bot --tap=kyungminlee/kyungminlee
+  - brew test-bot kyungminlee/kyungminlee/ghc
 
 notifications:
   email:
