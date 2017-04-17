@@ -3,6 +3,8 @@ class JuliaBinary < Formula
   homepage "https://julialang.org"
   version "0.5.1"
 
+  depends_on "patchelf"
+
   if MacOS.prefer_64_bit?
     url "https://julialang.s3.amazonaws.com/bin/linux/x64/0.5/julia-#{version}-linux-x86_64.tar.gz"
     sha256 "ae9512a9e0838e7e579acc3af653c220ff51206ec921967da8c72e8402105ed3"
@@ -27,5 +29,7 @@ class JuliaBinary < Formula
   def install
     libexec.install Dir["*"]
     bin.install_symlink Dir["#{libexec}/bin/*"]
+    system "#{Formula["patchelf"].opt_bin}/patchelf", "--set-rpath", "$ORIGIN/../lib:#{HOMEBREW_PREFIX}/lib", "#{bin}/julia"
+    system "#{Formula["patchelf"].opt_bin}/patchelf", "--set-rpath", "$ORIGIN/../lib:#{HOMEBREW_PREFIX}/lib", "#{bin}/julia-debug"
   end
 end
