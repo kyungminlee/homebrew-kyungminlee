@@ -1,14 +1,14 @@
 class JuliaBinary < Formula
   desc "The Julia programming language"
   homepage "https://julialang.org"
-  version "0.5.0"
+  version "0.5.1"
 
   if MacOS.prefer_64_bit?
     url "https://julialang.s3.amazonaws.com/bin/linux/x64/0.5/julia-#{version}-linux-x86_64.tar.gz"
-    sha256 "5b18bbfcc39b2214ce5ec5d3c186aa39dbcab0bc465415353d44762fe14d1183"
+    sha256 "ae9512a9e0838e7e579acc3af653c220ff51206ec921967da8c72e8402105ed3"
   else
     url "https://julialang.s3.amazonaws.com/bin/linux/x86/0.5/julia-#{version}-linux-i686.tar.gz"
-    sha256 "77aa539e48b260076d6e0baedb783b90c7478a88755f0671d78c7d8954ec95bf"
+    sha256 "da7d47782921c7908028572f1cb7281b79ff0a5b4d9cae9e7117c0ea53db776f"
   end
 
   devel do
